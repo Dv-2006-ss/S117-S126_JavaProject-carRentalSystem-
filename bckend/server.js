@@ -51,7 +51,8 @@ if (process.env.NODE_ENV === "production") {
   const frontendPath = path.join(__dirname, "../frontend/dist/frontend/browser");
   app.use(express.static(frontendPath));
 
-  app.get("/*", (req, res) => {
+  // Important: Express v5 / path-to-regexp v8 requires array/regex for wildcard routes
+  app.get(/(.*)/, (req, res) => {
     res.sendFile(path.resolve(frontendPath, "index.html"));
   });
 } else {
