@@ -91,6 +91,9 @@ export class RegisterComponent {
           this.loading = false;
           this.success = true;
 
+          // Add Registration success toast
+          this.toast.show('Successfully registered', 'success');
+
           setTimeout(() => {
             this.router.navigate(['/login']);
           }, 1200);
@@ -104,7 +107,7 @@ export class RegisterComponent {
   }
 
   get passwordStrong() {
-    return /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{8,}$/.test(this.password);
+    return this.password && this.password.length >= 6;
   }
 
   get passwordsMatch() {
