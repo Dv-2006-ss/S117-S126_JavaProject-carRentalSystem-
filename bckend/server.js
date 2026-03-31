@@ -1,95 +1,81 @@
 require("dotenv").config();
-require("dns").setServers(["8.8.8.8", "1.1.1.1"]); // FIX: Bypass Windows SRV DNS resolution bugs
+require("dns").setServers(["8.8.8.8", "1.1.1.1"]);
 
 const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
 const path = require("path");
 const cors = require("cors");
 const connectDB = require("./config/db");
 const protect = require("./middleware/authMiddleware");
 const scheduler = require("./utils/scheduler");
 
-// routes
-const authRoutes = require("./routes/authRoutes");
-const customerRoutes = require("./routes/customerRoutes");
-const campaignRoutes = require("./routes/campaignRoutes");
-const analyticsRoutes = require("./routes/analyticsRoutes");
-const emailRoutes = require("./routes/email.routes");
-const datasetRoutes = require("./routes/datasetRoutes");
-
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*", // allow all origins for development
+    methods: ["GET", "POST"]
+  }
+});
 
+// Store io on app for access in controllers
+app.set("io", io);
 
 // ================= DATABASE & SCHEDULER =================
 connectDB();
 scheduler.initScheduler();
 
+// ================= WEBSOCKETS HUB =================
+io.on("connection", (socket) => {
+  console.log(`📡 New Live Connection: ${socket.id}`);
+  
+  // Real-time Dashboard Subscription
+  socket.on("subscribe:stats", () => {
+    console.log(`📈 Client ${socket.id} subscribed to Real-Time Stats`);
+    socket.join("stats_room");
+  });
 
-// ================= DEBUG PING ROUTE =================
-app.get("/__ping", (req, res) => {
-  res.json({
-    ok: true,
-    time: Date.now(),
-    pid: process.pid
+  socket.on("disconnect", () => {
+    console.log(`📉 Offline: ${socket.id}`);
   });
 });
-
 
 // ================= MIDDLEWARE =================
 app.use(cors());
 app.use(express.json());
 
-
 // ================= ROUTES =================
-app.use("/api/auth", authRoutes);
-app.use("/api/customers", customerRoutes);
-app.use("/api/campaigns", campaignRoutes);
-app.use("/api/analytics", analyticsRoutes);
-app.use("/api/email", emailRoutes);
-app.use("/api/datasets", datasetRoutes);
+app.use("/api/auth", require("./routes/authRoutes"));
+app.use("/api/customers", require("./routes/customerRoutes"));
+app.use("/api/campaigns", require("./routes/campaignRoutes"));
+app.use("/api/analytics", require("./routes/analyticsRoutes"));
+app.use("/api/email", require("./routes/email.routes"));
+app.use("/api/datasets", require("./routes/datasetRoutes"));
 
-// ================= PRODUCTION DEPLOYMENT =================
+// Production Static Files
 if (process.env.NODE_ENV === "production") {
   const frontendPath = path.join(__dirname, "../frontend/dist/frontend/browser");
   app.use(express.static(frontendPath));
-
-  // Important: Express v5 / path-to-regexp v8 requires array/regex for wildcard routes
   app.get(/(.*)/, (req, res) => {
     res.sendFile(path.resolve(frontendPath, "index.html"));
   });
 } else {
-  // ================= HEALTH CHECK =================
-  app.get("/", (req, res) => {
-    res.send("🚀 Velox Backend Running");
-  });
+  app.get("/", (req, res) => res.send("🚀 Velox Reactive Backend Running"));
 }
 
-
-// ================= PROTECTED TEST =================
-app.get("/protected", protect, (req, res) => {
-  res.json({
-    message: "🔒 Protected route accessed",
-    user: req.user
-  });
-});
-
-
-// ================= GLOBAL ERROR HANDLER =================
+// Global Error Handler
 app.use((err, req, res, next) => {
   console.error("SERVER ERROR:", err);
-
-  // prevents double responses
   if (res.headersSent) return next(err);
-
   res.status(500).json({
     success: false,
     message: err.message || "Internal Server Error"
   });
 });
 
-
 // ================= SERVER START =================
 const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(`🔥 Server running on port ${PORT}`);
+server.listen(PORT, () => {
+  console.log(`🔥 Velox Reactive Server running on port ${PORT}`);
 });
