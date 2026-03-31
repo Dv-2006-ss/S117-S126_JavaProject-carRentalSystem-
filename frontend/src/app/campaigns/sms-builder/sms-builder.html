@@ -1,13 +1,32 @@
-<div class="builder-container fade-in">
+<div class="builder-container fade-in" (mousemove)="onMouseMove($event)">
+
+    <!-- Dashboard-style Hero Scene -->
+    <div class="dashboard-hero-lite">
+        <div class="hero-content" [style.transform]="'translate3d(' + (mouseX() * -20) + 'px,' + (mouseY() * -20) + 'px, 0)'">
+            <div class="badge-wrapper">
+                <div class="badge neon-glow pulse-soft">Premium Messaging</div>
+            </div>
+            <h1 class="page-title 3d-text">SMS Campaign <span class="highlight">Studio</span></h1>
+            <p class="page-subtitle glass-text">Compose high-impact mobile campaigns with real-time preview and 3D precision.</p>
+        </div>
+
+        <div class="hero-scene">
+            <div class="orbit-sphere sphere-one" 
+                 [style.transform]="'translate3d(' + (mouseX() * 50) + 'px,' + (mouseY() * 50) + 'px, 100px) rotate(' + (scrollProgress() * 360) + 'deg)'">
+                <span class="material-symbols-outlined">sms</span>
+            </div>
+            <div class="orbit-sphere sphere-two" 
+                 [style.transform]="'translate3d(' + (mouseX() * -70) + 'px,' + (mouseY() * -70) + 'px, 50px) rotate(' + (scrollProgress() * -180) + 'deg)'">
+                <span class="material-symbols-outlined">bolt</span>
+            </div>
+        </div>
+    </div>
 
     <div class="header glass-effect">
-        <h2>📱 Premium SMS Builder</h2>
-        <div class="actions">
+        <div class="actions ml-auto">
             <button class="btn-secondary" (click)="goBack()">✕ Cancel</button>
-            <button class="btn-danger highlight neon-glow-danger" *ngIf="isEditMode" (click)="deleteCampaign()">🗑
-                Delete</button>
-            <button class="btn-primary highlight neon-glow" (click)="confirmFinalSms()">{{ isEditMode ? '✔ Save Now' :
-                '🚀 Launch Now' }}</button>
+            <button class="btn-danger highlight neon-glow-danger" *ngIf="isEditMode" (click)="deleteCampaign()">🗑 Delete</button>
+            <button class="btn-primary highlight neon-glow" (click)="confirmFinalSms()">{{ isEditMode ? '✔ Save Now' : '🚀 Launch Now' }}</button>
         </div>
     </div>
 
@@ -93,7 +112,7 @@
         </div>
 
         <div class="preview-panel">
-            <div class="phone-mockup">
+            <div class="phone-mockup" [style.transform]="'perspective(1000px) rotateX(' + rotateX() + 'deg) rotateY(' + rotateY() + 'deg)'">
                 <div class="phone-screen">
                     <div class="phone-header android-header">
                         <span class="material-symbols-outlined"

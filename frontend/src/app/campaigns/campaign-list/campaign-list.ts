@@ -3,10 +3,11 @@ import { CommonModule } from '@angular/common';
 import { CampaignEngine } from '../../core/campaign-engine';
 import { CampaignService } from '../../core/services/campaign';
 
+import { EmailLoaderComponent } from '../../shared/loaders/email-loader/email-loader';
 @Component({
   selector: 'app-campaign-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, EmailLoaderComponent],
   templateUrl: './campaign-list.html'
 })
 export class CampaignListComponent implements OnInit {
@@ -14,6 +15,7 @@ export class CampaignListComponent implements OnInit {
   campaigns: any[] = [];
   datasets: any[] = [];
   campaignHistory: any[] = [];
+  isLoading = false; // ✅ Added for skeleton loader
 
   constructor(private engine: CampaignEngine, private campaignService: CampaignService) { }
 
@@ -27,12 +29,17 @@ export class CampaignListComponent implements OnInit {
     this.datasets = JSON.parse(
       localStorage.getItem(`datasets_${user}`) || '[]'
     );
+    this.isLoading = true; // ✅ Start loading
 
     this.campaignService.getHistory().subscribe({
       next: (res) => {
+        this.isLoading = false; // ✅ End loading
         this.campaignHistory = res;
       },
-      error: (err) => console.error("Could not fetch history in campaign-list", err)
+      error: (err) => {
+        this.isLoading = false; // ✅ End loading on error
+        console.error("Could not fetch history in campaign-list", err);
+      }
     });
   }
 

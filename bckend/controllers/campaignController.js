@@ -184,23 +184,33 @@ exports.sendCampaign = async (req, res, next) => {
     const companyName = userObj ? userObj.companyName : "Velox";
     const companyEmail = userObj ? userObj.email : process.env.EMAIL_FROM;
 
-    const results = await bulkService.sendBulkEmails(
+    // 🔥 NON-BLOCKING BACKGROUND PROCESSING: Send response immediately to UI
+    bulkService.sendBulkEmails(
       customers,
       campaign.subject,
       user => emailContent.replace("{{name}}", user.name),
       companyName,
-      companyEmail
-    );
-
-
-    campaign.status = "sent";
-    campaign.sentCount = customers.length;
-    await campaign.save();
-
+      companyEmail,
+      async (batchResults) => {
+        // Callback to update status chunk by chunk
+        const newLogs = batchResults.map(r => ({ target: r.email, status: r.status, error: r.error }));
+        await Campaign.findByIdAndUpdate(campaign._id, {
+          $push: { deliveryLogs: { $each: newLogs } }
+        });
+      }
+    ).then(async (results) => {
+      // Final update
+      campaign.status = "sent";
+      campaign.sentCount = results.filter(r => r.status === "sent").length;
+      await campaign.save();
+    }).catch(err => {
+      console.error("BACKGROUND EMAIL SEND FAILED:", err);
+    });
 
     res.json({
       success: true,
-      sent: customers.length
+      message: "Campaign delivery started in background",
+      estimatedTargets: customers.length
     });
 
   } catch (err) {

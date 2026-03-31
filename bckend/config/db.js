@@ -4,10 +4,7 @@ const connectDB = async () => {
   try {
     console.log("Connecting to MongoDB...");
 
-    const conn = await mongoose.connect(process.env.MONGO_URI, {
-      serverSelectionTimeoutMS: 10000, // wait longer before failing
-      family: 4 // force IPv4 (fixes Atlas DNS errors)
-    });
+    const conn = await mongoose.connect(process.env.MONGO_URI);
 
     console.log("✅ MongoDB Connected:", conn.connection.host);
 

@@ -1,3 +1,5 @@
+@use "../../mixins.scss" as *;
+
 .settings-container {
     max-width: 1000px;
     margin: 0 auto;
@@ -55,10 +57,8 @@
 }
 
 .settings-nav button.active {
-    background: var(--surface);
+    @include neumorphism-dark;
     color: var(--primary);
-    border-color: var(--border-light);
-    box-shadow: var(--shadow-sm);
     font-weight: 600;
 }
 
@@ -80,7 +80,8 @@
 }
 
 .settings-card {
-    padding: 2.5rem;
+    @include claymorphism;
+    padding: 3rem;
 }
 
 .settings-card h2 {
@@ -138,11 +139,11 @@ small {
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    @include aurora-bg;
     color: white;
     font-size: 2rem;
     font-weight: 700;
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 0 20px var(--primary-glow);
 }
 
 .avatar-actions {
@@ -170,10 +171,9 @@ small {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    padding: 1rem;
-    border: 1px solid var(--border-light);
+    padding: 1.25rem;
+    @include neumorphism-dark-inset;
     border-radius: var(--radius-md);
-    background: var(--surface-hover);
 }
 
 .toggle-info h4 {

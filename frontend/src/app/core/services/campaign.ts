@@ -3,6 +3,50 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
+export interface EmailBlock {
+  type: string;
+  content?: string;
+  text?: string;
+  url?: string;
+  align?: 'left' | 'center' | 'right';
+}
+
+export interface CampaignHistory {
+  _id?: string;
+  id?: string;
+  name: string;
+  status: string;
+  createdAt?: string;
+}
+
+export interface Campaign {
+  _id?: string;
+  id?: string;
+  name: string;
+  subject?: string;
+  product?: string;
+  offer?: string;
+  blocks?: EmailBlock[];
+  htmlContent?: string;
+  message?: string;
+}
+
+export interface EmailCampaignPayload {
+  name: string;
+  subject: string;
+  product: string;
+  offer: string;
+  blocks: EmailBlock[];
+}
+
+export interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  campaign?: T;
+  history?: T;
+  message?: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -11,7 +55,8 @@ export class CampaignService {
 
   // --- STATE MANAGEMENT: Angular Signals ---
   public emailSubject = signal<string>('New Email Campaign');
-  public emailBlocks = signal<any[]>([]);
+  public emailBlocks = signal<EmailBlock[]>([]);
+  public smsBlocks = signal<any[]>([]); // ✅ Added for SMS Canvas support
   public companyName = signal<string>('Company');
 
   constructor(private http: HttpClient) { }
@@ -25,29 +70,29 @@ export class CampaignService {
   }
 
   // ================= HISTORY ENDPOINTS =================
-  getHistory(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/history`, { headers: this.getHeaders() });
+  getHistory(): Observable<CampaignHistory[]> {
+    return this.http.get<CampaignHistory[]>(`${this.apiUrl}/history`, { headers: this.getHeaders() });
   }
 
-  saveHistory(data: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/history`, data, { headers: this.getHeaders() });
+  saveHistory(data: CampaignHistory): Observable<ApiResponse<CampaignHistory>> {
+    return this.http.post<ApiResponse<CampaignHistory>>(`${this.apiUrl}/history`, data, { headers: this.getHeaders() });
   }
 
-  deleteHistory(id: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/history/${id}`, { headers: this.getHeaders() });
+  deleteHistory(id: string): Observable<ApiResponse<{}>> {
+    return this.http.delete<ApiResponse<{}>>(`${this.apiUrl}/history/${id}`, { headers: this.getHeaders() });
   }
 
   // ================= CAMPAIGN LIST ENDPOINTS =================
-  getCampaigns(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl, { headers: this.getHeaders() });
+  getCampaigns(): Observable<Campaign[]> {
+    return this.http.get<Campaign[]>(this.apiUrl, { headers: this.getHeaders() });
   }
 
-  saveCampaign(data: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, data, { headers: this.getHeaders() });
+  saveCampaign(data: Campaign): Observable<ApiResponse<Campaign>> {
+    return this.http.post<ApiResponse<Campaign>>(this.apiUrl, data, { headers: this.getHeaders() });
   }
 
   // ================= ENDPOINTS FOR JSON/TEMPLATE DRIVEN EMAILS =================
-  createEmailCampaign(data: { name: string, subject: string, product: string, offer: string, blocks: any[] }): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/email`, data, { headers: this.getHeaders() });
+  createEmailCampaign(data: EmailCampaignPayload): Observable<ApiResponse<Campaign>> {
+    return this.http.post<ApiResponse<Campaign>>(`${this.apiUrl}/email`, data, { headers: this.getHeaders() });
   }
 }

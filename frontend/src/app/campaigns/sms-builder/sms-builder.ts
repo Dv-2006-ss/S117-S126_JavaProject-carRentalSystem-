@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -10,7 +10,7 @@ import { CampaignService } from '../../core/services/campaign';
     standalone: true,
     imports: [CommonModule, FormsModule],
     templateUrl: './sms-builder.html',
-    styleUrls: ['./sms-builder.css']
+    styleUrls: ['./sms-builder.scss']
 })
 export class SmsBuilderComponent implements OnInit {
 
@@ -20,11 +20,36 @@ export class SmsBuilderComponent implements OnInit {
     isDirectAccess = false;
     isEditMode = false;
     companyName = 'Company';
+    
+    // Scheduled Fields
     scheduledDateStr = '';
     scheduledTimeStr = '';
     scheduleMode: 'immediate' | 'later' = 'immediate';
-    userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     scheduledDate = '';
+    userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    // 3D Dashboard-Style Signals
+    mouseX = signal(0);
+    mouseY = signal(0);
+    scrollProgress = signal(0);
+    rotateX = signal(0);
+    rotateY = signal(0);
+
+    @HostListener('window:scroll', [])
+    onScroll() {
+      const scroll = window.scrollY;
+      const height = document.documentElement.scrollHeight - window.innerHeight;
+      this.scrollProgress.set(scroll / Math.max(height, 1));
+    }
+
+    onMouseMove(event: MouseEvent) {
+      const x = (event.clientX / window.innerWidth) - 0.5;
+      const y = (event.clientY / window.innerHeight) - 0.5;
+      this.mouseX.set(x);
+      this.mouseY.set(y);
+      this.rotateY.set(x * 30);
+      this.rotateX.set(y * -30);
+    }
 
     constructor(private router: Router, private toast: ToastService, private campaignService: CampaignService) { }
 
@@ -79,7 +104,7 @@ export class SmsBuilderComponent implements OnInit {
 
     confirmFinalSms() {
         if (this.isDirectAccess) {
-            this.toast.show("Action restricted: Please start a campaign from the Campaign Engine page first, rather than the sidebar.", "error");
+            this.toast.show("Action restricted: Please start a campaign from the Campaign Engine page first.", "error");
             return;
         }
         if (!this.smsContent.trim()) {
@@ -98,7 +123,6 @@ export class SmsBuilderComponent implements OnInit {
             this.scheduledDate = '';
         }
 
-        // Redirect back to standard form
         const navState: any = { dataset: this.dataset, campaign: this.campaign, scheduledDate: this.scheduledDate };
         if (this.isEditMode) navState.autoUpdateOnly = true;
         else navState.autoSend = true;

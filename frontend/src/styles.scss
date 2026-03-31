@@ -1,12 +1,5 @@
+@use "./mixins.scss" as *;
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-@import "tailwindcss";
-
-@theme {
-   --color-primary: #5b13ec;
-   --color-background-light: #f6f6f8;
-   --color-background-dark: #161022;
-   --font-display: "Inter", sans-serif;
-}
 
 /* ==========================================================================
    ULTRA-PREMIUM SAAS DESIGN SYSTEM
@@ -14,46 +7,35 @@
 ========================================================================== */
 
 :root {
-   /* Core Colors */
+   /* Core Colors (Dark 3D Mode) */
    --primary: #5b13ec;
-   /* Deep Purple (Stitch) */
    --primary-hover: #4a0ec0;
    --primary-dark: #3b0a99;
    --primary-light: #8b5cf6;
-   --primary-glow: rgba(91, 19, 236, 0.4);
+   --primary-glow: rgba(91, 19, 236, 0.6);
 
+   /* 3D Accents */
    --secondary: #0ea5e9;
-   /* Vibrant Sky Blue */
    --accent: #f43f5e;
-   /* Rose Accent */
+   --neon-cyan: #00f3ff;
+   --neon-purple: #bc13fe;
 
-   /* Success / Warning / Danger */
-   --success: #10b981;
-   --success-bg: rgba(16, 185, 129, 0.1);
-   --warning: #f59e0b;
-   --warning-bg: rgba(245, 158, 11, 0.1);
-   --danger: #ef4444;
-   --danger-bg: rgba(239, 68, 68, 0.1);
-
-   /* Neutrals & Surfaces (Stitch Dark Mode) */
-   --bg-app: #161022;
-   /* Outer background */
-   --surface: #1f1830;
-   /* Inner card surface */
-   --surface-hover: #2f2348;
-   /* Hover / Borders */
+   /* Neutrals & Surfaces (Obsidian Glass) */
+   --bg-app: #0f0a18;
+   --surface: #1a1325;
+   --surface-raised: #241a33;
+   --surface-hover: #2d2242;
 
    /* Text */
-   --text-main: #f1f5f9;
-   /* Slate 100 */
+   --text-main: #f8fafc;
    --text-muted: #94a3b8;
-   /* Slate 400 */
    --text-light: #64748b;
-   /* Slate 500 */
 
    /* Borders */
-   --border-light: #2f2348;
-   --border-focus: #5b13ec;
+   --border-light: rgba(255, 255, 255, 0.08);
+   --border-focus: var(--primary);
+   --border-3d-top: rgba(255, 255, 255, 0.15);
+   --border-3d-bottom: rgba(0, 0, 0, 0.6);
 
    /* Border Radius */
    --radius-sm: 8px;
@@ -62,17 +44,46 @@
    --radius-xl: 24px;
    --radius-full: 9999px;
 
-   /* Shadows (Modern soft diffuse style) */
-   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
-   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 1px rgba(0, 0, 0, 0.5);
-   --shadow-lg: 0 12px 24px -4px rgba(0, 0, 0, 0.4), 0 4px 12px -2px rgba(0, 0, 0, 0.3);
-   --shadow-xl: 0 20px 40px -8px rgba(0, 0, 0, 0.5);
-   --shadow-float: 0 30px 60px -12px rgba(91, 19, 236, 0.35);
+   /* 3D Volumetric Shadows */
+   --shadow-3d-base: 
+      8px 8px 16px rgba(0, 0, 0, 0.6), 
+      -8px -8px 16px rgba(255, 255, 255, 0.03);
+   
+   --shadow-3d-float: 
+      0px 20px 40px -10px rgba(0, 0, 0, 0.8),
+      0px 10px 20px -5px var(--primary-glow),
+      inset 0px 1px 1px rgba(255, 255, 255, 0.15);
+
+   --shadow-3d-inset: 
+      inset 4px 4px 8px rgba(0, 0, 0, 0.6), 
+      inset -4px -4px 8px rgba(255, 255, 255, 0.05);
+
+   --shadow-3d-button: 
+      4px 4px 8px rgba(0,0,0,0.5),
+      -4px -4px 8px rgba(255,255,255,0.05),
+      inset 0px 2px 2px rgba(255, 255, 255, 0.2),
+      inset 0px -2px 5px rgba(0, 0, 0, 0.3);
+
+   /* Base Shadows */
+   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4);
+   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+   --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.6);
+   --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.7);
 
    /* Transitions */
    --transition-fast: 0.15s ease-out;
-   --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+   --transition-smooth: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+   --transition-spring: 0.6s cubic-bezier(0.68, -0.6, 0.32, 1.6);
 }
+
+/* ================================
+   MORPHISM DESIGN PATTERNS (SCSS Mixins)
+================================ */
+
+.morphism-glass { @include glassmorphism; }
+.morphism-neu { @include neumorphism-dark; }
+.morphism-neu-inset { @include neumorphism-dark-inset; }
+.morphism-skeuo-btn { @include skeuomorphism-button; display: inline-flex; align-items: center; justify-content: center; padding: 0.8rem 1.75rem; font-weight: 600; cursor: pointer; }
 
 /* ================================
    GLOBAL RESET & STRUCTURE
@@ -179,20 +190,19 @@ button,
 /* Primary Button with Glow */
 .primary,
 .btn-primary {
-   background: linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%);
-   color: white;
-   box-shadow: 0 4px 12px var(--primary-glow), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+   @include skeuomorphism-button;
 }
 
 .primary:hover,
 .btn-primary:hover {
-   transform: translateY(-3px);
-   box-shadow: 0 12px 24px var(--primary-glow), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+   transform: translateY(-2px);
+   box-shadow: 0 8px 18px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.3);
 }
 
 .primary:active,
 .btn-primary:active {
-   transform: translateY(0);
+   transform: translateY(3px);
+   border-bottom-width: 1px;
 }
 
 .secondary,
@@ -241,7 +251,18 @@ textarea {
    border: 1px solid var(--border-light);
    border-radius: var(--radius-md);
    transition: var(--transition-smooth);
-   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.01);
+   box-shadow: var(--shadow-3d-inset);
+   @include neumorphism-dark-inset;
+
+   /* Standard Autofill Fix */
+   &:-webkit-autofill,
+   &:-webkit-autofill:hover,
+   &:-webkit-autofill:focus,
+   &:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 1000px var(--surface) inset !important;
+      -webkit-text-fill-color: var(--text-main) !important;
+      transition: background-color 5000s ease-in-out 0s;
+   }
 }
 
 input::placeholder {
@@ -258,8 +279,7 @@ input:focus,
 select:focus,
 textarea:focus {
    border-color: var(--primary);
-   background-color: var(--surface);
-   box-shadow: 0 0 0 4px var(--primary-glow);
+   box-shadow: inset 0 0 0 1px var(--primary-glow), inset 5px 5px 10px rgba(0,0,0,0.9);
    outline: none;
 }
 
@@ -267,11 +287,9 @@ textarea:focus {
    CARDS & CONTAINERS
 ================================ */
 .card {
-   background: var(--surface);
+   @include neumorphism-dark;
    border-radius: var(--radius-lg);
    padding: 32px;
-   box-shadow: var(--shadow-md);
-   border: 1px solid var(--border-light);
    transition: var(--transition-smooth);
    position: relative;
    z-index: 1;
@@ -299,9 +317,7 @@ textarea:focus {
    align-items: center;
    padding: 20px 24px;
    border-radius: var(--radius-md);
-   background: var(--surface);
-   box-shadow: var(--shadow-sm);
-   border: 1px solid var(--border-light);
+   @include glassmorphism;
    margin-bottom: 2rem;
 }
 
@@ -309,10 +325,8 @@ textarea:focus {
    DATA TABLES (Premium Grid Look)
 ================================ */
 .table-wrapper {
-   background: var(--surface);
+   @include neumorphism-dark;
    border-radius: var(--radius-lg);
-   box-shadow: var(--shadow-md);
-   border: 1px solid var(--border-light);
    overflow: hidden;
    margin-top: 1.5rem;
 }
@@ -402,11 +416,9 @@ textarea:focus {
 .pro-window {
    width: 500px;
    max-width: 90vw;
-   background: var(--surface);
+   @include glassmorphism;
    border-radius: var(--radius-xl);
    overflow: hidden;
-   box-shadow: var(--shadow-float);
-   border: 1px solid var(--border-light);
    animation: scaleUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -472,9 +484,7 @@ textarea:focus {
    max-width: 440px;
    padding: 3.5rem 3rem;
    border-radius: var(--radius-xl);
-   background: var(--surface);
-   box-shadow: var(--shadow-xl);
-   border: 1px solid var(--border-light);
+   @include glassmorphism;
    animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 

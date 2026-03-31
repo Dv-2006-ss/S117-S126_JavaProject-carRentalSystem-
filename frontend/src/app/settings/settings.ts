@@ -10,7 +10,7 @@ import { ToastService } from '../core/services/toast';
     standalone: true,
     imports: [CommonModule, FormsModule],
     templateUrl: './settings.html',
-    styleUrls: ['./settings.css']
+    styleUrls: ['./settings.scss']
 })
 export class SettingsComponent implements OnInit {
     activeTab = 'profile';

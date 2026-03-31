@@ -12,7 +12,7 @@ import { GlobalToastComponent } from './layout/global-toast';
   standalone: true,
   imports: [CommonModule, RouterOutlet, NavbarComponent, SidebarComponent, GlobalToastComponent],
   templateUrl: './app.html',
-  styleUrls: ['./app.css']
+  styleUrls: ['./app.scss']
 })
 export class AppComponent {
   constructor(private auth: AuthService) {

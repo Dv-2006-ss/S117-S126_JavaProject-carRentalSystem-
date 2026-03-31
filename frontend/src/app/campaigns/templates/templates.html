@@ -1,0 +1,77 @@
+<div class="templates-page canvas-background">
+  <div class="header-section">
+    <div class="title-wrap">
+      <h1 class="glow-text">Template <span class="gradient-text">Studio</span></h1>
+      <p>Choose a pre-built canvas and customize it with advanced 3D & Neumorphic blocks for your campaigns.</p>
+    </div>
+    <div class="header-actions">
+      <button class="morphism-skeuo-btn create-btn" (click)="showCreateModal = true">
+        <span class="material-symbols-outlined">add</span>
+        Blank Canvas
+      </button>
+    </div>
+  </div>
+
+  <div class="filters-container morphism-neu-inset">
+    <div 
+      class="filter-chip" 
+      *ngFor="let cat of categories" 
+      [class.active]="selectedCategory === cat"
+      (click)="selectedCategory = cat"
+    >
+      {{ cat }}
+    </div>
+  </div>
+
+  <div class="template-grid">
+    <div class="template-card morphism-glass" *ngFor="let tmpl of filteredTemplates">
+      <div class="thumbnail">
+        <img [src]="tmpl.thumbnail" alt="Template Preview" />
+        <div class="overlay">
+          <button class="morphism-skeuo-btn view-btn" (click)="useTemplate(tmpl)">
+            <span class="material-symbols-outlined">edit_square</span>
+            Load Canvas
+          </button>
+        </div>
+      </div>
+      <div class="card-info">
+        <div class="card-header">
+          <h3>{{ tmpl.name }}</h3>
+          <span class="category-badge" [class]="tmpl.category">{{ tmpl.category }}</span>
+        </div>
+        <p>{{ tmpl.description }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Modal Selection -->
+  <div class="morphism-modal-overlay" *ngIf="showCreateModal" (click)="showCreateModal = false">
+    <div class="morphism-modal canvas-modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Start New Canvas</h2>
+        <button class="close-modal" (click)="showCreateModal = false">×</button>
+      </div>
+      <div class="modal-body selection-grid">
+        <div class="selection-card mutation-hover" (click)="createBlank('email')">
+          <div class="card-icon gradient-email">
+            <span class="material-symbols-outlined">mail</span>
+          </div>
+          <div class="card-text">
+            <h3>Email Campaign</h3>
+            <p>Drag-and-drop 3D blocks to build high-performance emails.</p>
+          </div>
+        </div>
+
+        <div class="selection-card mutation-hover" (click)="createBlank('sms')">
+          <div class="card-icon gradient-sms">
+            <span class="material-symbols-outlined">sms</span>
+          </div>
+          <div class="card-text">
+            <h3>SMS Alert</h3>
+            <p>Create clean, high-urgency notifications for your users.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

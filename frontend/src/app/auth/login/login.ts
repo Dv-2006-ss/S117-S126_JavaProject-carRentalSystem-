@@ -1,10 +1,9 @@
-import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component, ChangeDetectorRef } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../auth.service';
+import { AuthService, AuthResponse } from '../auth.service';
 import { CommonModule } from '@angular/common';
-import { environment } from '../../../environments/environment';
 import { ToastService } from '../../core/services/toast';
 
 @Component({
@@ -12,7 +11,7 @@ import { ToastService } from '../../core/services/toast';
   standalone: true,
   imports: [FormsModule, CommonModule],
   templateUrl: './login.html',
-  styleUrls: ['./login.css']
+  styleUrls: ['./login.scss']
 })
 export class LoginComponent {
 
@@ -23,11 +22,11 @@ export class LoginComponent {
   loading = false;
 
   constructor(
-    private http: HttpClient,
     private router: Router,
     private route: ActivatedRoute,
     private auth: AuthService,
-    private toast: ToastService
+    private toast: ToastService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   login() {
@@ -41,7 +40,7 @@ export class LoginComponent {
     }
 
     // EMAIL FORMAT
-    const emailRegex = /^[^\s@]+@[^\s@]+.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(this.email)) {
       this.message = "Invalid email format";
       return;
@@ -55,53 +54,30 @@ export class LoginComponent {
 
     this.loading = true;
 
-    // ===== API LOGIN =====
-    this.http.post<any>(`${environment.api}/api/auth/login`, {
-      email: this.email,
-      password: this.password
-    })
+    // Use centralized AuthService
+    this.auth.login(this.email, this.password)
       .subscribe({
-
-        next: (res: any) => {
-
-
-          console.log("LOGIN RESPONSE:", res); // debug
-
-          if (!res.token) {
-            this.message = "Login failed: no token";
-            this.loading = false;
-            return;
-          }
-
-          // ✅ FIX: use service method so navbar gets user data
-          this.auth.loginSuccess(res.token, res.user);
-
-          // (kept your original lines — not removed)
-          localStorage.setItem('token', res.token);
-          localStorage.setItem('username', res.user?.name || 'User');
-
-          this.auth.setLoggedIn(true);
-
+        next: (res: AuthResponse) => {
           this.loading = false;
-
-          // redirect
-          const returnUrl =
-            this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
-
-          this.router.navigateByUrl(returnUrl);
-
-
+          
+          if (res.token && res.user) {
+            this.toast.show('Login successful', 'success');
+            
+            const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+            this.router.navigateByUrl(returnUrl);
+          } else {
+            this.message = "Login failed: No credentials returned";
+          }
+          this.cdr.detectChanges();
         },
-
-        error: (err) => {
+        error: (err: HttpErrorResponse) => {
           this.loading = false;
           this.message = err.error?.message || "Invalid credentials or server offline";
+          this.cdr.detectChanges();
         }
       });
-
   }
 
-  // register navigation
   goRegister() {
     this.router.navigate(['/register']);
   }

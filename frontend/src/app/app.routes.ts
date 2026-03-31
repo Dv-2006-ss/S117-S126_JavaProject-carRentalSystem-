@@ -11,7 +11,7 @@ import { SmsBuilderComponent } from './campaigns/sms-builder/sms-builder';
 import { CampaignListComponent } from './campaigns/campaign-list/campaign-list';
 import { AuthGuard } from './auth/auth.guard';
 import { SettingsComponent } from './settings/settings';
-
+import { TemplatesComponent } from './campaigns/templates/templates';
 export const routes: Routes = [
 
   // default → dashboard
@@ -41,6 +41,11 @@ export const routes: Routes = [
   {
     path: 'email-builder',
     component: EmailBuilderComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'templates',
+    component: TemplatesComponent,
     canActivate: [AuthGuard]
   },
   {

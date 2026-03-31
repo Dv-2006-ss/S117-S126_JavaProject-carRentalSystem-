@@ -107,9 +107,19 @@
         </button>
       </div>
 
-      <div class="card saved-datasets-card">
-        <h3>Saved Datasets</h3>
-        <div class="dataset-list" *ngIf="datasets && datasets.length > 0">
+        <div class="card saved-datasets-card">
+        <div class="card-header-sm">
+            <h3>Saved Datasets</h3>
+            <div class="pulse-dot" *ngIf="isLoading"></div>
+        </div>
+
+        <!-- Branded Email Logo Loader -->
+        <div class="branded-loader-box" *ngIf="isLoading">
+            <app-email-loader></app-email-loader>
+            <p class="loader-status">Fetching your marketing data...</p>
+        </div>
+
+        <div class="dataset-list" *ngIf="!isLoading && datasets && datasets.length > 0">
           <!-- Double Click to Load, Single click to prepare Delete -->
           <div class="dataset-item" *ngFor="let d of datasets" (dblclick)="selectDataset(d)"
             title="Double-click to load" style="cursor: pointer; position: relative;">

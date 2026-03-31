@@ -1,9 +1,11 @@
+@use "../mixins.scss" as *;
+
 .app-layout {
     display: flex;
     flex-direction: column;
     height: 100vh;
     overflow: hidden;
-    background: var(--bg-app);
+    @include aurora-bg;
 }
 
 .app-header {

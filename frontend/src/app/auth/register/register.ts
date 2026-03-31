@@ -1,9 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
 import { AuthService } from '../auth.service';
 import { ToastService } from '../../core/services/toast';
 
@@ -12,13 +10,12 @@ import { ToastService } from '../../core/services/toast';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './register.html',
-  styleUrl: './register.css'
+  styleUrl: './register.scss'
 })
 export class RegisterComponent {
 
   name = '';
-  companyName = ''; // ✅ added
-  age = '';
+  companyName = '';
   email = '';
   password = '';
   confirmPassword = '';
@@ -30,9 +27,9 @@ export class RegisterComponent {
 
   constructor(
     private router: Router,
-    private http: HttpClient,
     private auth: AuthService,
-    private toast: ToastService
+    private toast: ToastService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   register() {
@@ -45,7 +42,7 @@ export class RegisterComponent {
       return;
     }
 
-    // COMPANY NAME ✅ REQUIRED
+    // COMPANY NAME
     if (!this.companyName.trim()) {
       this.message = "Enter company name";
       return;
@@ -65,7 +62,7 @@ export class RegisterComponent {
 
     // PASSWORD STRENGTH
     if (!this.passwordStrong) {
-      this.message = "Weak password";
+      this.message = "Weak password (min 6 chars)";
       return;
     }
 
@@ -77,31 +74,28 @@ export class RegisterComponent {
 
     this.loading = true;
 
-    // ✅ CORRECT PAYLOAD
-    this.http.post<any>(`${environment.api}/api/auth/register`, {
+    // Use centralized AuthService
+    this.auth.register({
       name: this.name,
       companyName: this.companyName,
       email: this.email,
       password: this.password
     })
       .subscribe({
-
         next: (res) => {
-
           this.loading = false;
           this.success = true;
-
-          // Add Registration success toast
-          this.toast.show('Successfully registered', 'success');
-
+          this.toast.show('Registration successful', 'success');
+          
           setTimeout(() => {
             this.router.navigate(['/login']);
           }, 1200);
         },
-
         error: (err) => {
           this.loading = false;
           this.message = err.error?.message || "Registration failed";
+          // Important for ensuring UI updates in all Angular versions
+          if (this.cdr) this.cdr.detectChanges();
         }
       });
   }
@@ -119,6 +113,6 @@ export class RegisterComponent {
   }
 
   showGoogleToast() {
-    this.toast.show('Google Workspace integration is coming soon!', 'info');
+    this.toast.show('Google Workspace integration is currently in development!', 'info');
   }
 }

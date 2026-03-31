@@ -1,15 +1,11 @@
+@use "../../../mixins.scss" as *;
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
 :host {
   display: block;
   font-family: 'Inter', sans-serif;
-  --primary: #5b13ec;
-  --bg-dark: #0a0514;
-  --bg-card: #120a1f;
-  --bg-card-hover: rgba(255, 255, 255, 0.05);
-  --text-main: #ffffff;
-  --text-muted: #94a3b8;
-  --text-darker: #64748b;
+  --bg-dark: var(--bg-app);
+  --bg-card: var(--surface);
+  --bg-card-hover: var(--surface-hover);
 }
 
 /* Animations */
@@ -116,14 +112,15 @@
   width: 100%;
   max-width: 500px;
   margin: 0 2rem 4rem 2rem;
-  padding: 2rem;
-  background-color: rgba(22, 16, 34, 0.7);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(91, 19, 236, 0.2);
-  border-radius: 1.5rem;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+  padding: 2.5rem;
+  @include glassmorphism;
+  border-radius: var(--radius-xl);
   animation: float 6s infinite ease-in-out;
+  transform-style: preserve-3d;
+  transition: transform var(--transition-spring);
+}
+.testimonial-card:hover {
+  transform: translateY(-20px) rotateX(10deg) rotateY(-5deg);
 }
 
 .testimonial-icon {
@@ -256,9 +253,14 @@
 /* Form Container */
 .form-wrapper {
   width: 100%;
-  max-width: 440px;
+  max-width: 480px;
   margin: 0 auto;
-  padding: 3rem 0;
+  padding: 3.5rem;
+  @include neumorphism-dark;
+  border-radius: var(--radius-xl);
+  position: relative;
+  z-index: 30;
+  transform-style: preserve-3d;
 }
 
 /* Header */
@@ -423,25 +425,26 @@
 
 .custom-input {
   width: 100%;
-  background-color: var(--bg-card);
-  border: 1px solid rgba(91, 19, 236, 0.2);
-  color: white;
+  background-color: var(--surface-raised);
+  border: 1px solid var(--border-light);
+  color: var(--text-main);
   font-size: 1rem;
-  border-radius: 0.75rem;
-  padding: 1rem 1rem 1rem 2.8rem;
+  border-radius: var(--radius-md);
+  padding: 1rem 1rem 1rem 3rem;
   outline: none;
-  transition: all 0.2s;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-3d-inset);
   box-sizing: border-box;
 }
 
 .custom-input::placeholder {
-  color: #475569;
+  color: var(--text-muted);
 }
 
 .custom-input:focus {
-  border-color: transparent;
-  box-shadow: 0 0 0 2px var(--primary);
+  border-color: var(--border-focus);
+  box-shadow: var(--shadow-3d-inset), 0 0 0 4px rgba(91, 19, 236, 0.25);
+  background-color: var(--surface);
 }
 
 .remember-wrapper {
@@ -501,32 +504,35 @@
 .submit-btn {
   width: 100%;
   position: relative;
-  background: linear-gradient(to right, var(--primary), #7828fa);
-  color: white;
-  font-weight: 700;
+  @include skeuomorphism-button;
   padding: 1rem;
-  border-radius: 0.75rem;
-  border: none;
-  box-shadow: 0 0 30px rgba(91, 19, 236, 0.3);
-  transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  cursor: pointer;
-  margin-top: 0.5rem;
+  margin-top: 1rem;
   overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .submit-btn:hover {
-  background: linear-gradient(to right, #6b1df5, #8637ff);
-  transform: translateY(-4px);
+  transform: translateY(2px);
+  border-bottom-width: 1px;
+  box-shadow: var(--shadow-3d-base), 0 0 30px var(--primary-glow);
+}
+
+.submit-btn:active {
+  transform: translateY(4px);
+  box-shadow: var(--shadow-3d-inset);
+  border-bottom-width: 0px;
 }
 
 .submit-btn:disabled {
-  opacity: 0.7;
+  opacity: 0.5;
   cursor: not-allowed;
   transform: none;
+  box-shadow: none;
 }
 
 .btn-glow-overlay {

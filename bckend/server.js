@@ -1,4 +1,5 @@
 require("dotenv").config();
+require("dns").setServers(["8.8.8.8", "1.1.1.1"]); // FIX: Bypass Windows SRV DNS resolution bugs
 
 const express = require("express");
 const path = require("path");

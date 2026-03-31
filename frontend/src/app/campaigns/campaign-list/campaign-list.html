@@ -41,7 +41,17 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngIf="!campaignHistory.length">
+        <!-- Branded Email Logo Loader -->
+        <tr *ngIf="isLoading">
+            <td colspan="4">
+                <div class="branded-loader-cell">
+                    <app-email-loader></app-email-loader>
+                    <p class="loader-status">Fetching your campaign history...</p>
+                </div>
+            </td>
+        </tr>
+
+        <tr *ngIf="!isLoading && !campaignHistory.length">
           <td colspan="4"
             style="text-align: center; padding: 30px; color: #666; background: transparent; border: none;">No campaign
             history yet.</td>

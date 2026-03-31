@@ -7,12 +7,13 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { CustomerService } from '../../core/services/customer';
 import { DatasetService } from '../../core/services/dataset';
 import { ToastService } from '../../core/services/toast';
+import { EmailLoaderComponent } from '../../shared/loaders/email-loader/email-loader';
 @Component({
   selector: 'app-customer-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, ScrollingModule],
+  imports: [CommonModule, FormsModule, ScrollingModule, EmailLoaderComponent],
   templateUrl: './customer-list.html',
-  styleUrls: ['./customer-list.css']
+  styleUrls: ['./customer-list.scss']
 })
 export class CustomerListComponent implements OnInit {
 
@@ -63,6 +64,7 @@ export class CustomerListComponent implements OnInit {
   showDeleteDatasetConfirm = false;
   showMergePopup = false;
   isPersistedDataset = false;
+  isLoading = false; // ✅ Added for skeleton loader
 
   // ================= PAGINATION =================
 
@@ -472,10 +474,12 @@ export class CustomerListComponent implements OnInit {
 
     const token = localStorage.getItem('token') || '';
     const username = localStorage.getItem('username') || 'guest';
+    this.isLoading = true; // ✅ Start loading
 
     this.datasetService.getDatasets(token)
       .subscribe({
         next: (res: any) => {
+          this.isLoading = false; // ✅ End loading
           console.log("Fetched datasets response:", res);
           let newDatasets = res.datasets ? res.datasets : res;
 
@@ -491,6 +495,7 @@ export class CustomerListComponent implements OnInit {
           this.cd.detectChanges();
         },
         error: (err: any) => {
+          this.isLoading = false; // ✅ End loading on error
           if (err.status === 401) {
             localStorage.removeItem('token');
             localStorage.removeItem('currentUser');

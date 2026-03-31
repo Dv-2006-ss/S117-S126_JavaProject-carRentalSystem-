@@ -4,7 +4,6 @@ const UserSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    unique: true,
     trim: true
   },
   companyName: {
@@ -37,7 +36,7 @@ const UserSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-// ✅ CASE-INSENSITIVE EMAIL AND NAME CHECK
+// ✅ CASE-INSENSITIVE EMAIL CHECK ONLY (Names can be duplicates)
 UserSchema.pre("save", async function () {
   const existingEmail = await this.constructor.findOne({
     email: { $regex: `^${this.email}$`, $options: "i" }
@@ -45,14 +44,6 @@ UserSchema.pre("save", async function () {
 
   if (existingEmail && existingEmail._id.toString() !== this._id.toString()) {
     throw new Error("Email already exists");
-  }
-
-  const existingName = await this.constructor.findOne({
-    name: { $regex: `^${this.name}$`, $options: "i" }
-  });
-
-  if (existingName && existingName._id.toString() !== this._id.toString()) {
-    throw new Error("User name already exists");
   }
 });
 

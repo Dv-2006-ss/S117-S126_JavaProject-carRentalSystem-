@@ -7,6 +7,6 @@ import { RouterModule } from '@angular/router';
     standalone: true,
     imports: [CommonModule, RouterModule],
     templateUrl: './sidebar.html',
-    styleUrls: ['./sidebar.css']
+    styleUrls: ['./sidebar.scss']
 })
 export class SidebarComponent { }

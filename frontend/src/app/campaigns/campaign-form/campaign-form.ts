@@ -11,7 +11,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
   standalone: true,
   imports: [CommonModule, FormsModule, ScrollingModule],
   templateUrl: './campaign-form.html',
-  styleUrls: ['./campaign-form.css']
+  styleUrls: ['./campaign-form.scss']
 })
 export class CampaignFormComponent implements OnInit {
 

@@ -1,26 +1,85 @@
 <div class="dashboard-hero fade-in">
-  <div class="hero-content">
-    <h1 class="slogan">Accelerate growth with intelligent automation.</h1>
-    <p class="sub-slogan">Reach your audience across email and SMS effortlessly. Design campaigns, automate sequences,
-      and watch your business thrive.</p>
+  <div class="hero-content" 
+       [style.transform]="'translate3d(' + (mouseX() * -40) + 'px,' + (mouseY() * -40) + 'px, 0)'">
+    <div class="badge-wrapper">
+        <div class="badge neon-glow pulse-soft">Velox Intelligence</div>
+    </div>
+    <h1 class="slogan 3d-text">Welcome back, <br/><span class="user-highlight">{{userName}}.</span></h1>
+    <p class="sub-slogan glass-text">A scalable, high-performance workspace designed for your target campaigns and data-driven growth.</p>
 
     <div class="hero-actions">
-      <a (click)="onBuildClick()" style="cursor: pointer;" class="btn-build">
-        Let's build <span class="arrow">→</span>
-      </a>
+      <button (click)="onBuildClick()" class="btn-build skeuo-3d">
+        LAUNCH CAMPAIGN <span class="arrow">→</span>
+      </button>
     </div>
   </div>
 
-  <div class="hero-visual">
-    <div class="img-wrapper main-img">
-      <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800"
-        alt="Marketing Analytics">
-      <div class="glass-overlay"></div>
+  <div class="hero-scene">
+    <!-- The Ultra-Reactive 3D Laptop Container -->
+    <div class="computer-scene" 
+         [style.transform]="'translate3d(' + (mouseX() * 20) + 'px,' + (mouseY() * 20) + 'px, 0) rotateX(' + (10 + mouseY() * -15 - scrollProgress() * 20) + 'deg) rotateY(' + (-15 + mouseX() * 20 + scrollProgress() * 30) + 'deg)'">
+      
+      <!-- Premium Render Placeholder with High Contrast Overlay -->
+      <div class="laptop-chassis">
+          <div class="laptop-lid-high-end morphism-neu">
+              <!-- Actual Interactive Screen Content Layered on top -->
+              <div class="screen-surface">
+                  <div class="live-canvas-preview">
+                    <!-- The "Email Being Sent" lively animation -->
+                    <div class="canvas-item active-pulse">
+                         <span class="material-symbols-outlined canvas-icon">auto_awesome</span>
+                         <div class="canvas-text">
+                             <h3>Live Campaign: {{companyTarget}}</h3>
+                             <p>Processing Data Streams...</p>
+                         </div>
+                    </div>
+                    
+                    <div class="data-graph-skeleton">
+                        <div class="bar bar-1"></div>
+                        <div class="bar bar-2"></div>
+                        <div class="bar bar-3"></div>
+                        <div class="bar bar-4"></div>
+                    </div>
+
+                    <div class="glare-surface"></div>
+                  </div>
+              </div>
+          </div>
+          <div class="laptop-keyboard morphism-glass"></div>
+      </div>
+
+      <!-- Super reactive "Orbiting" Objects -->
+      <div class="orbit-sphere sphere-one" 
+           [style.transform]="'translate3d(' + (mouseX() * 60) + 'px,' + (mouseY() * 60) + 'px, 150px) rotate(' + (scrollProgress() * 360) + 'deg)'">
+          <span class="material-symbols-outlined">send</span>
+      </div>
+      <div class="orbit-sphere sphere-two" 
+           [style.transform]="'translate3d(' + (mouseX() * -80) + 'px,' + (mouseY() * -80) + 'px, 100px) rotate(' + (scrollProgress() * -180) + 'deg)'">
+          <span class="material-symbols-outlined">analytics</span>
+      </div>
     </div>
-    <div class="img-wrapper floating-img">
-      <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=400"
-        alt="Data Visualization">
-    </div>
-    <div class="glow-bg"></div>
+
+    <!-- Massive Scene Shadows/Glows -->
+    <div class="ambient-glow" [style.transform]="'translateX(' + (mouseX() * 100) + 'px)'"></div>
   </div>
+</div>
+
+<!-- Scroll Visual Guide -->
+<div class="scroll-helper" [style.opacity]="1 - scrollProgress() * 2">
+    <div class="mouse-icon"></div>
+    <span>Discover Precision</span>
+</div>
+
+<!-- Extra Reactive Sections -->
+<div class="reactive-stats-grid" [style.transform]="'translateY(' + (100 - scrollProgress() * 100) + 'px)'" [style.opacity]="scrollProgress() * 1.5">
+    <div class="neu-stat-card">
+        <span class="label">Total Conversion</span>
+        <span class="val">84.2%</span>
+        <div class="mini-chart"></div>
+    </div>
+    <div class="neu-stat-card primary-theme">
+        <span class="label">Revenue Uplift</span>
+        <span class="val">+$12.5k</span>
+        <div class="mini-chart"></div>
+    </div>
 </div>

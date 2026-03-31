@@ -40,7 +40,26 @@ exports.registerUser = async (req, res) => {
       { expiresIn: "1d" }
     );
 
+    // 🔥 ASYNC BACKGROUND TASK: Don't block registration for SMTP speed
+    const emailService = require("../services/email.service");
+    emailService.sendEmail({
+      to: newUser.email,
+      subject: "Welcome to Velox - Your Modern Marketing Platform",
+      html: `
+        <div style="font-family: Arial, sans-serif; background: #0f0a18; color: #f8fafc; padding: 40px; border-radius: 12px;">
+          <h1 style="color: #5b13ec;">Welcome to Velox, ${newUser.name}!</h1>
+          <p>Your account for <strong>${newUser.companyName}</strong> has been successfully created.</p>
+          <p>Velox is designed to help you build, track, and scale your marketing campaigns with ease using high-performance 3D morphism tools.</p>
+          <div style="margin: 30px 0;">
+            <a href="http://localhost:4203/login" style="background: #5b13ec; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold;">Log in to Your Dashboard</a>
+          </div>
+          <p style="color: #94a3b8; font-size: 13px;">If you didn't create this account, please ignore this email.</p>
+        </div>
+      `
+    }).catch(mailErr => console.error("WELCOME EMAIL FAILED (background):", mailErr.message));
+
     res.status(201).json({
+      success: true,
       message: "Registration successful",
       token,
       user: newUser
@@ -83,6 +102,7 @@ exports.loginUser = async (req, res) => {
     );
 
     res.json({
+      success: true,
       message: "Login successful",
       token,
       user: {

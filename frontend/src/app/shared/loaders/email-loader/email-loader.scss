@@ -1,0 +1,105 @@
+@use "../../../../mixins.scss" as *;
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  perspective: 1000px;
+}
+
+.scene {
+  width: 80px;
+  height: 50px;
+  position: relative;
+  transform-style: preserve-3d;
+  animation: float 2s infinite ease-in-out;
+}
+
+.envelope {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  transform-style: preserve-3d;
+  animation: rotateX 4s infinite linear;
+}
+
+.face {
+  position: absolute;
+  background: rgba(91, 19, 236, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(4px);
+  border-radius: 4px;
+}
+
+.front { width: 80px; height: 50px; transform: translateZ(10px); background: rgba(91, 19, 236, 0.6); }
+.back  { width: 80px; height: 50px; transform: translateZ(-10px) rotateY(180deg); }
+.left  { width: 20px; height: 50px; transform: rotateY(-90deg) translateZ(10px); }
+.right { width: 20px; height: 50px; transform: rotateY(90deg) translateZ(70px); }
+.top   { width: 80px; height: 20px; transform: rotateX(90deg) translateZ(10px); background: rgba(255, 255, 255, 0.1); }
+.bottom{ width: 80px; height: 20px; transform: rotateX(-90deg) translateZ(40px); }
+
+.letter {
+  position: absolute;
+  width: 70px;
+  height: 40px;
+  background: white;
+  left: 5px;
+  top: 5px;
+  transform: translateZ(0);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: popLetter 2s infinite ease-in-out;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+.logo-mark {
+  color: #5b13ec;
+  font-weight: 900;
+  font-size: 1.2rem;
+}
+
+.loading-bar {
+  width: 120px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  margin-top: 2.5rem;
+  overflow: hidden;
+  @include neumorphism-dark-inset;
+}
+
+.fill {
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, #5b13ec, #34d399);
+  animation: progressMove 1.5s infinite ease-in-out;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes rotateX {
+  from { transform: rotateY(0deg) rotateX(10deg); }
+  to { transform: rotateY(360deg) rotateX(10deg); }
+}
+
+@keyframes popLetter {
+  0%, 100% { transform: translateY(0) translateZ(0); }
+  50% { transform: translateY(-30px) translateZ(2px); }
+}
+
+@keyframes progressMove {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(300%); }
+}

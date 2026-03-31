@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, effect, computed } from '@angular/core';
+import { Component, OnInit, signal, effect, computed, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -11,7 +11,7 @@ import { CampaignService } from '../../core/services/campaign';
     standalone: true,
     imports: [CommonModule, FormsModule],
     templateUrl: './email-builder.html',
-    styleUrls: ['./email-builder.css']
+    styleUrls: ['./email-builder.scss']
 })
 export class EmailBuilderComponent implements OnInit {
 
@@ -27,6 +27,29 @@ export class EmailBuilderComponent implements OnInit {
     scheduleMode: 'immediate' | 'later' = 'immediate';
     userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     scheduledDate = '';
+
+    // 3D Dashboard-Style Signals
+    mouseX = signal(0);
+    mouseY = signal(0);
+    scrollProgress = signal(0);
+    rotateX = signal(0);
+    rotateY = signal(0);
+
+    @HostListener('window:scroll', [])
+    onScroll() {
+        const scroll = window.scrollY;
+        const height = document.documentElement.scrollHeight - window.innerHeight;
+        this.scrollProgress.set(scroll / Math.max(height, 1));
+    }
+
+    onMouseMove(event: MouseEvent) {
+        const x = (event.clientX / window.innerWidth) - 0.5;
+        const y = (event.clientY / window.innerHeight) - 0.5;
+        this.mouseX.set(x);
+        this.mouseY.set(y);
+        this.rotateY.set(x * 30);
+        this.rotateX.set(y * -30);
+    }
 
     get blocks() { return this.campaignService.emailBlocks(); }
     get subjectLine() { return this.campaignService.emailSubject(); }
@@ -111,10 +134,10 @@ export class EmailBuilderComponent implements OnInit {
 
     addTemplateBlock(type: string) {
         const blocks = this.campaignService.emailBlocks();
-        if (type === 'text') blocks.push({ type: 'text', content: '' });
-        if (type === 'button') blocks.push({ type: 'button', text: 'Click Here', url: 'https://' });
+        if (type === 'text') blocks.push({ type: 'text', content: '', align: 'left' });
+        if (type === 'button') blocks.push({ type: 'button', text: 'Click Here', url: 'https://', align: 'center' });
         if (type === 'divider') blocks.push({ type: 'divider' });
-        if (type === 'image') blocks.push({ type: 'image', url: '' });
+        if (type === 'image') blocks.push({ type: 'image', url: '', align: 'center' });
         this.campaignService.emailBlocks.set([...blocks]);
     }
 
@@ -122,6 +145,16 @@ export class EmailBuilderComponent implements OnInit {
         const blocks = this.campaignService.emailBlocks();
         blocks.splice(i, 1);
         this.campaignService.emailBlocks.set([...blocks]);
+    }
+
+    moveBlock(i: number, direction: 'up' | 'down') {
+        const blocks = [...this.campaignService.emailBlocks()];
+        if (direction === 'up' && i > 0) {
+            [blocks[i], blocks[i - 1]] = [blocks[i - 1], blocks[i]];
+        } else if (direction === 'down' && i < blocks.length - 1) {
+            [blocks[i], blocks[i + 1]] = [blocks[i + 1], blocks[i]];
+        }
+        this.campaignService.emailBlocks.set(blocks);
     }
 
     updatePreview() {
@@ -133,16 +166,17 @@ export class EmailBuilderComponent implements OnInit {
         const htmlString = `
       <div style="font-family: 'Inter', sans-serif; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
         ${blocks.map(block => {
-            if (block.type === 'text') return `<p style="line-height: 1.6; font-size: 16px; color: #4b5563;">${block.content || 'Start typing...'}</p>`;
+            const align = block.align || 'center';
+            if (block.type === 'text') return `<p style="line-height: 1.6; font-size: 16px; color: #4b5563; text-align: ${align};">${block.content || 'Start typing...'}</p>`;
             if (block.type === 'button') return `
-            <div style="text-align: center; margin: 25px 0;">
+            <div style="text-align: ${align}; margin: 25px 0;">
               <a href="${block.url}" style="display: inline-block; padding: 12px 28px; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);">
                 ${block.text || 'Button'}
               </a>
             </div>
           `;
             if (block.type === 'divider') return `<hr style="border: 0; height: 1px; background: #e5e7eb; margin: 30px 0;"/>`;
-            if (block.type === 'image') return `<div style="text-align: center; margin: 20px 0;">${block.url ? `<img src="${block.url}" alt="Image" style="max-width: 100%; border-radius: 8px;" onerror="this.style.display='none'" />` : `<div style="padding:40px; background:#f3f4f6; border-radius:8px; color:#9ca3af; font-size:14px; border:2px dashed #d1d5db;">Placeholder Image</div>`}</div>`;
+            if (block.type === 'image') return `<div style="text-align: ${align}; margin: 20px 0;">${block.url ? `<img src="${block.url}" alt="Image" style="max-width: 100%; border-radius: 8px;" onerror="this.style.display='none'" />` : `<div style="padding:40px; background:#f3f4f6; border-radius:8px; color:#9ca3af; font-size:14px; border:2px dashed #d1d5db;">Placeholder Image</div>`}</div>`;
             return '';
         }).join('')}
 
@@ -193,8 +227,8 @@ export class EmailBuilderComponent implements OnInit {
             next: (res) => {
                 this.isSaving = false;
                 this.toast.show(this.startedAsEdit ? "Campaign updated successfully." : "Email generated successfully.", "success");
-                this.campaign.message = res.campaign.htmlContent;
-                this.campaign.id = res.campaign._id;
+                this.campaign.message = res.campaign?.htmlContent;
+                this.campaign.id = res.campaign?._id;
 
                 const navState: any = { dataset: this.dataset, campaign: this.campaign, scheduledDate: this.scheduledDate };
                 if (this.startedAsEdit) {

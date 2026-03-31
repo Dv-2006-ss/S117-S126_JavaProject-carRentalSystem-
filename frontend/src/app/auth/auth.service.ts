@@ -1,14 +1,31 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
+
+export interface User {
+  _id?: string;
+  id?: string;
+  name: string;
+  email: string;
+  password?: string;
+  role?: string;
+  companyName?: string;
+  timezone?: string;
+  notifications?: any;
+}
+
+export interface AuthResponse {
+  success: boolean;
+  token?: string;
+  user?: User;
+  message?: string;
+  notifications?: any;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  // =========================
-  // REACTIVE LOGIN STATE
-  // =========================
   private authState = new BehaviorSubject<boolean>(this.hasToken());
   authState$ = this.authState.asObservable();
   private apiUrl = `${environment.api}/api/auth`;
@@ -28,103 +45,69 @@ export class AuthService {
   }
 
   // =========================
-  // LOGIN (LOCAL STORAGE)
+  // REAL BACKEND LOGIN
   // =========================
-  login(email: string, password: string): boolean {
-
-    const users = this.getUsers();
-
-    const user = users.find((u: any) =>
-      u.email === email && u.password === password
-    );
-
-    if (user) {
-      this.loginSuccess('logged', user);
-      return true;
-    }
-
-    return false;
+  login(email: string, password: string): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, { email, password })
+      .pipe(
+        tap(res => {
+          if (res.token && res.user) {
+            this.loginSuccess(res.token, res.user);
+          }
+        })
+      );
   }
 
   // =========================
-  // LOGIN SUCCESS HANDLER
+  // REAL BACKEND REGISTER
   // =========================
-  loginSuccess(token: string, user: any) {
+  register(data: User): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, data);
+  }
+
+  // =========================
+  // AUTH HELPERS
+  // =========================
+  loginSuccess(token: string, user: User) {
     localStorage.setItem('token', token);
+    localStorage.setItem('username', user.name || 'User');
     localStorage.setItem('currentUser', JSON.stringify(user));
     this.authState.next(true);
   }
 
-  // =========================
-  // MANUAL LOGIN STATE SETTER
-  // =========================
   setLoggedIn(value: boolean) {
     this.authState.next(value);
   }
 
-  // =========================
-  // REGISTER
-  // =========================
-  register(data: any): boolean {
-
-    const users = this.getUsers();
-
-    const exists = users.find((u: any) => u.email === data.email);
-    if (exists) return false;
-
-    users.push(data);
-    localStorage.setItem('users', JSON.stringify(users));
-    return true;
-  }
-
-  // =========================
-  // LOGOUT
-  // =========================
   logout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('username');
     localStorage.removeItem('currentUser');
     localStorage.removeItem('active_dataset');
     this.authState.next(false);
   }
 
-  // =========================
-  // CHECK LOGIN
-  // =========================
   isLoggedIn(): boolean {
     return this.hasToken();
   }
 
-  // =========================
-  // CURRENT USER
-  // =========================
-  getCurrentUser() {
+  getCurrentUser(): User | null {
     const user = localStorage.getItem('currentUser');
     return user ? JSON.parse(user) : null;
   }
 
   // =========================
-  // SAFE USER LIST
+  // SETTINGS UPDATES
   // =========================
-  private getUsers(): any[] {
-    try {
-      return JSON.parse(localStorage.getItem('users') || '[]');
-    } catch {
-      return [];
-    }
+  updateProfile(data: Partial<User>): Observable<AuthResponse> {
+    return this.http.put<AuthResponse>(`${this.apiUrl}/profile`, data, { headers: this.getHeaders() });
   }
 
-  // =========================
-  // BACKEND INTEGRATION
-  // =========================
-  updateProfile(data: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/profile`, data, { headers: this.getHeaders() });
+  updatePassword(data: any): Observable<AuthResponse> {
+    return this.http.put<AuthResponse>(`${this.apiUrl}/password`, data, { headers: this.getHeaders() });
   }
 
-  updatePassword(data: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/password`, data, { headers: this.getHeaders() });
-  }
-
-  updateNotifications(data: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/notifications`, data, { headers: this.getHeaders() });
+  updateNotifications(data: any): Observable<AuthResponse> {
+    return this.http.put<AuthResponse>(`${this.apiUrl}/notifications`, data, { headers: this.getHeaders() });
   }
 }

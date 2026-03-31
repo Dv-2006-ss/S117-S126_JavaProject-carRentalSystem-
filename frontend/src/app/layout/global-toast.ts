@@ -44,7 +44,7 @@ import { ToastService, Toast } from '../core/services/toast';
       </div>
     </div>
   `,
-  styleUrls: ['./global-toast.css']
+  styleUrls: ['./global-toast.scss']
 })
 export class GlobalToastComponent {
 
