@@ -4,22 +4,28 @@ const protect = require("../middleware/authMiddleware");
 
 const campaignController = require("../controllers/campaignController");
 
-// Defensive check to ensure we have functions
-const createCampaign = campaignController.createCampaign || ((req, res) => res.status(501).send("Not implemented"));
-const getCampaigns = campaignController.getCampaigns || ((req, res) => res.status(501).send("Not implemented"));
-const deleteCampaign = campaignController.deleteCampaign || ((req, res) => res.status(501).send("Not implemented"));
-const sendCampaign = campaignController.sendCampaign || ((req, res) => res.status(501).send("Not implemented"));
+// Guard every route handler so a missing export cannot crash server startup.
+const safeHandler = (handlerName) => {
+  const handler = campaignController[handlerName];
+  if (typeof handler === "function") return handler;
 
-router.post("/", protect, createCampaign);
-router.get("/", protect, getCampaigns);
-router.delete("/:id", protect, deleteCampaign);
-router.post("/send/:id", protect, sendCampaign);
-router.post("/email", protect, campaignController.createEmailCampaign);
+  return (req, res) => {
+    res.status(501).json({
+      message: `Campaign handler '${handlerName}' is not implemented`,
+    });
+  };
+};
+
+router.post("/", protect, safeHandler("createCampaign"));
+router.get("/", protect, safeHandler("getCampaigns"));
+router.delete("/:id", protect, safeHandler("deleteCampaign"));
+router.post("/send/:id", protect, safeHandler("sendCampaign"));
+router.post("/email", protect, safeHandler("createEmailCampaign"));
 
 // ================= HISTORY =================
-router.get("/history", protect, campaignController.getCampaignHistory);
-router.post("/history", protect, campaignController.saveCampaignHistory);
-router.delete("/history/:id", protect, campaignController.deleteCampaignHistory);
+router.get("/history", protect, safeHandler("getCampaignHistory"));
+router.post("/history", protect, safeHandler("saveCampaignHistory"));
+router.delete("/history/:id", protect, safeHandler("deleteCampaignHistory"));
 
 
 module.exports = router;
