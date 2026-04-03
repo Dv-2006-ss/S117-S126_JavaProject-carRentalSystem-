@@ -1,16 +1,15 @@
 @use "../../../mixins.scss" as *;
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
 :host {
   display: block;
   min-height: 100vh;
-  font-family: 'Outfit', 'Inter', sans-serif;
+  font-family: 'Inter', sans-serif;
   color: var(--text-main);
 }
 
 .page-container {
-  max-width: 1400px;
+  max-width: 1440px;
   margin: 0 auto;
   padding: 0;
 }
@@ -54,16 +53,18 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 2rem;
-  padding: 2.5rem;
+  padding: 2rem;
   @include glassmorphism;
   border-radius: var(--radius-xl);
+  gap: 1.5rem;
 }
 
 .page-title {
-  font-size: 1.8rem;
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-size: 2rem;
   font-weight: 700;
   margin: 0 0 0.5rem 0;
-  background: linear-gradient(135deg, #ffffff 20%, var(--primary-light));
+  background: linear-gradient(135deg, #ffffff 15%, var(--primary-light) 70%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -79,14 +80,16 @@
 .header-actions {
   display: flex;
   gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .active-dataset-bar {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.2);
+  background: rgba(52, 211, 153, 0.08);
+  border: 1px solid rgba(52, 211, 153, 0.16);
   padding: 0.8rem 1.5rem;
   border-radius: var(--radius-lg);
   margin-bottom: 2rem;
@@ -146,20 +149,20 @@ button,
 
 .btn-primary.highlight {
   @include skeuomorphism-button;
-  background: linear-gradient(180deg, #10b981 0%, #059669 100%);
-  border-color: #34d399;
-  border-bottom-color: #065f46;
+  background: linear-gradient(180deg, #22c55e 0%, #15803d 100%);
+  border-color: #4ade80;
+  border-bottom-color: #166534;
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(15, 27, 45, 0.56);
   color: white;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-light);
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(28, 47, 71, 0.72);
+  border-color: var(--border-strong);
 }
 
 .btn-danger {
@@ -183,7 +186,7 @@ button,
 }
 
 .btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(28, 47, 71, 0.52);
   color: white;
 }
 
@@ -194,7 +197,7 @@ button,
 }
 
 .btn-text-primary:hover {
-  background: rgba(91, 19, 236, 0.15);
+  background: rgba(29, 205, 214, 0.12);
 }
 
 .w-full {
@@ -227,6 +230,7 @@ button,
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  border: 1px solid var(--border-light);
 }
 
 .card {
@@ -235,8 +239,8 @@ button,
 }
 
 .action-flow-card {
-  background: linear-gradient(180deg, rgba(31, 24, 48, 0.6) 0%, rgba(91, 19, 236, 0.1) 100%);
-  border-color: rgba(91, 19, 236, 0.2);
+  background: linear-gradient(180deg, rgba(15, 27, 45, 0.86) 0%, rgba(29, 205, 214, 0.09) 100%);
+  border-color: rgba(29, 205, 214, 0.16);
   text-align: center;
   align-items: center;
 }
@@ -247,7 +251,7 @@ button,
 }
 
 .action-flow-card h3 {
-  color: white;
+  color: var(--text-main);
   margin: 0 0 0.5rem;
 }
 
@@ -287,8 +291,8 @@ button,
 }
 
 .dataset-item:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(28, 47, 71, 0.48);
+  border-color: rgba(29, 205, 214, 0.16);
 }
 
 .d-info {
@@ -300,7 +304,7 @@ button,
 }
 
 .d-info .material-icon {
-  color: var(--primary-light);
+  color: var(--primary);
   font-size: 1.1rem;
 }
 
@@ -312,7 +316,7 @@ button,
 }
 
 .btn-link:hover {
-  background: rgba(91, 19, 236, 0.15);
+  background: rgba(29, 205, 214, 0.12);
 }
 
 /* ================= TABLE ================= */
@@ -394,16 +398,15 @@ button,
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-muted);
-  @include glassmorphism;
-  background: rgba(0, 0, 0, 0.3);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(8, 17, 31, 0.84);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .saas-table td {
   padding: 1rem 2rem;
   font-size: 0.95rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
-  color: white;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+  color: var(--text-main);
 }
 
 .body-table tr {
@@ -411,7 +414,7 @@ button,
 }
 
 .body-table tr:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(28, 47, 71, 0.44);
 }
 
 .id-cell {
@@ -432,7 +435,7 @@ button,
 .status-badge {
   display: inline-flex;
   padding: 0.25rem 0.75rem;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(148, 163, 184, 0.14);
   color: var(--text-muted);
   border-radius: var(--radius-full);
   font-size: 0.75rem;
@@ -447,8 +450,8 @@ button,
 
 .table-footer {
   padding: 1rem 2rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  background: rgba(0, 0, 0, 0.15);
+  border-top: 1px solid rgba(148, 163, 184, 0.08);
+  background: rgba(8, 17, 31, 0.36);
 }
 
 .pagination {
@@ -461,7 +464,7 @@ button,
   padding: 0.4rem 0.8rem;
   @include neumorphism-dark;
   font-size: 0.85rem;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(148, 163, 184, 0.08);
 }
 
 .page-info {
@@ -474,7 +477,7 @@ button,
 .pro-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.8);
+  background: rgba(2, 6, 23, 0.72);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   z-index: 1000;
@@ -485,12 +488,12 @@ button,
 }
 
 .pro-window {
-  background: rgba(31, 24, 48, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(10, 17, 30, 0.94);
+  border: 1px solid var(--border-light);
   border-radius: var(--radius-xl);
   width: 90%;
   max-width: 500px;
-  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  box-shadow: 0 24px 48px rgba(2, 6, 23, 0.44), inset 0 1px 0 rgba(255, 255, 255, 0.04);
   overflow: hidden;
   animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -508,8 +511,8 @@ button,
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+  background: rgba(8, 17, 31, 0.72);
 }
 
 .pro-titlebar h3 {
@@ -529,7 +532,7 @@ button,
   height: 32px;
   padding: 0;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(148, 163, 184, 0.08);
   color: var(--text-muted);
 }
 
@@ -569,7 +572,7 @@ button,
 .input-group input:focus {
   border-color: var(--primary);
   outline: none;
-  box-shadow: inset 0 0 10px rgba(91, 19, 236, 0.3), 0 0 15px rgba(91, 19, 236, 0.1);
+  box-shadow: inset 0 0 10px rgba(29, 205, 214, 0.18), 0 0 0 3px rgba(29, 205, 214, 0.08);
 }
 
 .input-error {
@@ -622,15 +625,15 @@ button,
   justify-content: space-between;
   align-items: center;
   padding: 1rem 1.5rem;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(15, 27, 45, 0.56);
+  border: 1px solid rgba(148, 163, 184, 0.08);
   border-radius: var(--radius-md);
   transition: 0.2s;
 }
 
 .dataset-card:hover {
   border-color: var(--primary);
-  background: rgba(91, 19, 236, 0.1);
+  background: rgba(29, 205, 214, 0.08);
 }
 
 .d-title {
@@ -643,8 +646,8 @@ button,
   position: fixed;
   bottom: 2rem;
   right: 2rem;
-  background: white;
-  color: black;
+  background: rgba(248, 250, 252, 0.96);
+  color: #0f172a;
   padding: 0.8rem 1.2rem;
   border-radius: var(--radius-lg);
   display: flex;
@@ -656,7 +659,7 @@ button,
 }
 
 .btn-undo {
-  background: black;
+  background: #0f172a;
   color: white;
   padding: 0.4rem 0.8rem;
   font-size: 0.8rem;
@@ -672,9 +675,9 @@ button,
   gap: 1rem;
   padding: 1rem 1.5rem;
   border-radius: var(--radius-lg);
-  background: rgba(31, 24, 48, 0.95);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(10, 17, 30, 0.95);
+  box-shadow: 0 10px 40px rgba(2, 6, 23, 0.34);
+  border: 1px solid var(--border-light);
 }
 
 .toast-indicator {
@@ -722,12 +725,33 @@ button,
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(148, 163, 184, 0.18);
   border-radius: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(148, 163, 184, 0.32);
+}
+
+@media (max-width: 1100px) {
+  .main-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .header-actions {
+    justify-content: stretch;
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
 }
 
 @keyframes fadeIn {
