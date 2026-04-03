@@ -37,6 +37,23 @@
   padding: 24px;
 }
 
+.app-layout.auth-layout {
+  background: none;
+}
+
+.app-layout.auth-layout::before {
+  display: none;
+}
+
+.app-body.auth-body {
+  overflow: visible;
+}
+
+.app-main.auth-main {
+  padding: 0;
+  overflow: hidden;
+}
+
 .custom-scrollbar::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -58,5 +75,10 @@
 @media (max-width: 900px) {
   .app-main {
     padding: 14px;
+  }
+
+  .app-main.auth-main {
+    padding: 0;
+    overflow-y: auto;
   }
 }
